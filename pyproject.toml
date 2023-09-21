@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "multimode"
+version = "0.1.0"
+description = ""
+authors = ["Jonathan <Jonathanschwinger@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+matplotlib = "^3.8.0"
+qutip = "^4.7.3"
+benchmark-utils = "^0.2.3"
+
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.25.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
