@@ -2,6 +2,8 @@
 using Plots
 using QuantumOptics
 
+
+
 # Plotting Wigner Function
 function quick_plot_wigner(state; 
     x = [-3:0.02:3;], 
@@ -21,19 +23,71 @@ function quick_plot_wigner(state;
 end
 
 
+#### CHAR FUNC #### 
+function two_mode_char_func(state, α_list, β_list)
+    # find use basis to 
+    basis_a = basis(ptrace(state,1))
+    basis_b = basis(ptrace(state,2))
+    char_func_grid = Array{ComplexF64}(undef, length(α_list),length(β_list))
+
+    for (i,α) in enumerate(α_list)
+        for (j, β) in enumerate(β_list)
+            char_func_grid[i,j] = expect(displace(basis_a,α) ⊗ displace(basis_b,β), state)
+        end
+    end
+
+    # plot
+    ax = subplot()
+    cf = ax.contourf(α_list,β_list,real(char_func_grid))
+    ax.set_aspect("equal")
+    ax.set_xlabel("α")
+    ax.set_ylabel("β")
+    ax.set_title("Two-Mode Characteristic Function")
+    colorbar(cf)
+    gcf()
+end
+
+
+
 function char_func_point(basis ,state, x,y)
     expect(displace(basis, x+y*1im), state)
 end 
 
-function characteristic_function(basis, state, xvec = [-3:0.02:3;], yvec = [-3:0.02:3;], is_real = true)
+function char_func(state, xvec = [-3:0.02:3;], yvec = [-3:0.02:3;], is_real = true)
     
-    char_func_grid = char_func_point.(Ref(basis), Ref(state), xvec', yvec)
+    fb = basis(state)
+    char_func_grid = char_func_point.(Ref(fb), Ref(state), xvec', yvec)
 
+    # plot
+    ax = subplot()
     if is_real
-    heatmap(xvec,yvec,real(char_func_grid))
-    else
-    heatmap(xvec,yvec,imag(char_func_grid))
+        cf = ax.contourf(xvec,yvec,real(char_func_grid))
+    else 
+        cf = ax.contourf(xvec,yvec,imag(char_func_grid))
+    end
+
+    ax.set_aspect("equal")
+    ax.set_xlabel("α")
+    ax.set_ylabel("β")
+    ax.set_title("SingleMode Characteristic Function")
+    colorbar(cf)
+    gcf()
 end
+
+############ Retired ###############
+# function char_func_point(basis ,state, x,y)
+#     expect(displace(basis, x+y*1im), state)
+# end 
+
+# function characteristic_function(basis, state, xvec = [-3:0.02:3;], yvec = [-3:0.02:3;], is_real = true)
     
-end
+#     char_func_grid = char_func_point.(Ref(basis), Ref(state), xvec', yvec)
+
+#     if is_real
+#     heatmap(xvec,yvec,real(char_func_grid))
+#     else
+#     heatmap(xvec,yvec,imag(char_func_grid))
+# end
+    
+# end
 

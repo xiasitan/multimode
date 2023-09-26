@@ -1,14 +1,12 @@
 using QuantumOptics
 using BenchmarkTools
 
-
-
 samples = 1
-evals = 100
-cutoffs = [50:10:70;]
-displacements = [1,2]
+evals = 20
+cutoffs = [30:10:150;]
+displacements = [1,2,3,4]
 
-name = "ecd_timeevolution_master_1,2_test"
+name = "ecd_timeevolution_master_1,2_test_julia"
 
 function f(N,α)
 
@@ -109,34 +107,20 @@ println("Benchmarking: ", name)
 # run benchmark and save data in nested dictionary = { alpha=1 : {N: dimension, {t = time} }}
 nested_dict = Dict{Any, Dict{String, Vector{Float32}}}()
 for α in displacements
-    one_alpha_dict = Dict{String, Vector{Any}}()
+    one_alpha_dict = Dict("N"=>[], "t"=> [])
     println()
     println("Max displacement: ", α)
     print("Cutoff: ")
     for N in cutoffs
         print(N," ")
         t = @belapsed f($N, $α) samples=samples evals=evals
-        if haskey(one_alpha_dict, "N")
-            # Key already exists, append the value to the existing list
-            push!(one_alpha_dict["N"], N)
-        else
-            # Key doesn't exist, create a new key with a vector containing the value
-            one_alpha_dict["N"] = [N]
-        end
-
-        if haskey(one_alpha_dict, "t")
-            # Key already exists, append the value to the existing list
-            push!(one_alpha_dict["t"], t)
-        else
-            # Key doesn't exist, create a new key with a vector containing the value
-            one_alpha_dict["t"] = [t]
-        end
-        nested_dict["alpha=$α"] = one_alpha_dict
+        push!(one_alpha_dict["N"], N)
+        push!(one_alpha_dict["t"], t)
     end
+    nested_dict["alpha=$α"] = one_alpha_dict
 end
+
 println()
 
 include("bmutils.jl")
 bmutils.save(name, nested_dict)
-
-

@@ -5,10 +5,10 @@ import json
 
 samples = 10
 evals = 1
-cutoffs = range(50, 71, 10)
-displacements = [1, 2]
+cutoffs = range(30, 151, 10)
+displacements = [1, 2,3, 4]
 
-name = "qutip_ecd_timeevolution_master_1,2_test"
+name = "qutip_ecd_timeevolution_master_1234_test"
 
 def setup(N):
     options = qt.Options()
